@@ -4,7 +4,9 @@ const connect = require("./src/config/DataBaseConnection.js");
 const cors = require("cors");
 const passport = require("passport");
 const { passportLocalSetup } = require("./passport.js");
+const Tender = require('./src/models/Tender.js');
 const expressSession = require("express-session");
+const { createTender } = require("./src/utils/CreateTender/CreateTender.js");
 
 // Import your Contractor and GovOfficial models
 const Contractor = require("./src/models/Contractor.js");
@@ -182,6 +184,20 @@ app.post('/assignContract', async (req, res) => {
 // 
 
 
+
+app.get("/getAllTenders", async (req, res) => {
+  try {
+
+    const tenders = await Tender.find();
+    return res.status(200).json({ tenders });
+
+  } catch (error) {
+
+    return res.status(401).json({ error });
+
+  }
+
+})
 
 // Connection to the database
 const database_url = process.env.DATABASE;
