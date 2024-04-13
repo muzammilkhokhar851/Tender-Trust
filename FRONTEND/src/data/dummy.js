@@ -723,7 +723,7 @@ export const Tenderdata = [
         icon: <FiShoppingBag />,
       },
       {
-        name: 'Assign Task',
+        name: 'Assign Tender',
         link: 'govofficial/tender/assign',
         icon: <FiShoppingBag />,
       },
@@ -742,11 +742,11 @@ export const Tenderdata = [
         link: 'bid',
         icon: <FiShoppingBag />,
       },
-      {
-        name: 'Withdraw Tokens',
-        link: 'withdraw',
-        icon: <FiShoppingBag />,
-      },
+      // {
+      //   name: 'Withdraw Tokens',
+      //   link: 'withdraw',
+      //   icon: <FiShoppingBag />,
+      // },
     ],
   },
 ]

@@ -1,59 +1,78 @@
 // SPDX-License-Identifier: MIT
 pragma solidity ^0.8.0;
 
-contract TenderCreation {
-    address public governmentOfficial;
+contract TenderSystem {
+    address public owner;
     
-      enum TenderStatus { Open, Closed, Cancelled }
-
     struct Tender {
+        uint id;
         string name;
         string contractTitle;
         string description;
-        uint256 startDate;
-        uint256 endDate;
-        uint256 tenderNumber;
-        TenderStatus status;
+        string startDate;
+        string endDate;
+        bool active;
+        uint winningContractorId;
     }
     
-    Tender[] public tenders;
+    struct Contractor {
+        uint id;
+        string name;
+        string companyName;
+        string contactNumber;
+        uint bid;
+    }
+    
+    mapping(uint => Tender[]) public tenders;
+    mapping(uint => Contractor[]) public contractors;
+    uint public tenderCounter;
+    uint public contractorCounter;
+    
+    event TenderCreated(uint id, string name, string contractTitle, string description, string startDate, string endDate);
+    event BidPlaced(uint tenderId, uint bidderId, uint bid);
+    event ContractAssigned(uint tenderId, uint contractorId, uint bid);
     
     constructor() {
-        governmentOfficial = msg.sender;
-    }
-    
-    modifier onlyGovernmentOfficial() {
-        require(msg.sender == governmentOfficial, "Only government official can create tenders");
-        _;
-    }
-  
-    function createTender(
-        string memory _name,
-        string memory _contractTitle,
-        string memory _description,
-        uint256 _startDate,
-        uint256 _endDate,
-        uint256 _tenderNumber
-    ) public {
-        tenders.push(Tender({
-            name: _name,
-            contractTitle: _contractTitle,
-            description: _description,
-            startDate: _startDate,
-            endDate: _endDate,
-            tenderNumber: _tenderNumber,
-            status: TenderStatus.Open
-        }));
-    }
-
-    function getAllTenders() public view returns (Tender[] memory) {
-        return tenders;
-    }
-    
-    function closeTender(uint256 _tenderIndex) external onlyGovernmentOfficial {
-        
-        tenders[_tenderIndex].status = TenderStatus.Closed;
+        owner = msg.sender;
     }
     
    
+    
+    function createTender(string memory _name, string memory _contractTitle, string memory _description, string memory _startDate, string memory _endDate) public returns (uint , string memory, string memory, string memory, string memory, string memory) {
+       
+        tenders[tenderCounter].push(Tender(tenderCounter, _name, _contractTitle, _description, _startDate, _endDate, true, 0));
+       
+        return (tenderCounter++, _name, _contractTitle, _description, _startDate, _endDate);
+    }
+    
+    function placeBid(uint _tenderId, string memory _name, string memory _companyName, string memory _contactNumber, uint _bid) public { 
+        contractors[_tenderId].push(Contractor(contractorCounter++, _name, _companyName, _contactNumber, _bid));
+        emit BidPlaced(_tenderId, contractorCounter - 1, _bid);
+    }
+    
+    function assignContract(uint _tenderId) public{
+        
+        uint highestBid = 0;
+        uint winningContractor;
+        
+        for (uint i = 0; i < contractors[_tenderId].length; i++) {
+            if (contractors[_tenderId][i].bid > highestBid) {
+                highestBid = contractors[_tenderId][i].bid;
+                winningContractor = contractors[_tenderId][i].id;
+            }
+        }
+        
+        tenders[_tenderId][tenderCounter-1].active = false;
+        tenders[_tenderId][tenderCounter-1].winningContractorId = winningContractor;
+        emit ContractAssigned(_tenderId, winningContractor, highestBid);
+    }
+    
+    function getTendersForId(uint _tenderId) public view returns (Tender[] memory) {
+    return tenders[_tenderId];
+}
+
+
+    function getContractorsForTender(uint _tenderId) public view returns (Contractor[] memory) {
+        return contractors[_tenderId];
+    }
 }

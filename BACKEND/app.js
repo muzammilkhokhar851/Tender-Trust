@@ -57,7 +57,7 @@ const web3 = new Web3(
 );
 
 
-const contractAddress = "0xBf506db32180D64c9153A6bB24292d2671270203";
+const contractAddress = "0x6B99Ba6AFb2697e7e829db71B3B44fEc1F5cb8c9";
 const contract = new web3.eth.Contract(ABI, contractAddress);
 
 
@@ -103,7 +103,18 @@ app.get("/getAllTenders", async (req, res) => {
         allTenders.push(...tenders);
     }
 
-    res.status(200).json({ status: 200, allTenders });
+     // Convert BigInt values to strings
+     allTenders = allTenders.map(tender => {
+      for (let key in tender) {
+        if (typeof tender[key] === 'bigint') {
+          tender[key] = tender[key].toString();
+        }
+      }
+      return tender;
+    });
+
+
+    res.status(200).json({ status: 200, tenders: allTenders });
   } catch (error) {
     res.status(500).json({ status: 500 });
     console.error(error);
@@ -115,6 +126,8 @@ app.get("/getAllTenders", async (req, res) => {
 
 app.post('/placeBid', async (req, res) => {
   const { tenderId, name, companyName, contactNumber, bid, account } = req.body;
+
+  console.log(tenderId, name, companyName, contactNumber, bid, account);
 
   try {
     await contract.methods.placeBid(tenderId, name, companyName, contactNumber, bid)
@@ -147,18 +160,30 @@ app.get('/getContractorsForTender', async (req, res) => {
 app.post('/assignContract', async (req, res) => {
   const { tenderId, account } = req.body;
 
-  try {
-    await contract.methods.assignContract(tenderId)
-      .send({ from: account, gas: 3000000, gasPrice: web3.utils.toWei('1', 'wei') })
-      .on('receipt', console.log)
-      .on('error', console.error);
+  console.log(tenderId, account);
 
-    res.status(200).json({ status: 200 });
-  } catch (error) {
-    res.status(500).json({ status: 500 });
-    console.error(error);
+  try {
+    const result = await contract.methods.assignContract(tenderId)
+      .send({ from: account, gas: 5000000, gasPrice: web3.utils.toWei('1', 'wei') })
+      .on('receipt', console.log);
+
+      const response = result.events.ContractAssigned.returnValues;
+      
+for (let key in response) {
+  if (typeof response[key] === 'bigint') {
+    response[key] = response[key].toString();
   }
-});
+}
+console.log("-------------------------------------",response);
+      
+      
+
+      res.status(200).json({ status: 200, response });
+    } catch (error) {
+      console.error("error with contract method exectuion:,",error.message);
+      res.status(500).json({ status: 500 });
+      console.error(error);
+    }});
 
 
 
@@ -181,23 +206,7 @@ app.post('/assignContract', async (req, res) => {
 
 
 //---------------------------------------------------------------
-// 
 
-
-
-app.get("/getAllTenders", async (req, res) => {
-  try {
-
-    const tenders = await Tender.find();
-    return res.status(200).json({ tenders });
-
-  } catch (error) {
-
-    return res.status(401).json({ error });
-
-  }
-
-})
 
 // Connection to the database
 const database_url = process.env.DATABASE;

@@ -13,6 +13,7 @@ import { Link } from "react-router-dom";
 import { useState } from "react";
 import axios from "axios";
 import { setpublic } from "../Toolkit/Slices/booleanSlice";
+import { setLoginLoading } from "../Toolkit/Slices/authUserSlice";
 
 const Login = () => {
   const { currentColor } = useStateContext();
@@ -27,6 +28,12 @@ const Login = () => {
   const authUser = useSelector((state) => state.user.authUser);
   const loading = useSelector((state) => state.user.loginLoading);
   const error = useSelector((state) => state.user.error);
+
+  useEffect(() => {
+    setLoginLoading(false);
+   } , [authUser, error]);  
+
+   console.log("loading", loading);
 
   const [loginData, setLoginData] = useState({
     email: "",

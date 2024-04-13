@@ -1,13 +1,11 @@
 import React from "react";
 import { TendersData } from "../data/dummy";
 import Tender from "../components/Tender";
+import StausTender from "../components/StausTender";
 import axios from "axios";
 import { useEffect, useState } from "react";
 
-
-
 const Public_tenders = () => {
-
   const [tenders, setTenders] = useState([]);
 
   const GetTenders = async () => {
@@ -35,6 +33,7 @@ const Public_tenders = () => {
   useEffect(() => {
     GetTenders();
   }, []);
+  console.log("This is alll tenders", tenders);
 
   return (
     <>
@@ -45,7 +44,7 @@ const Public_tenders = () => {
         <div className="grid grid-cols-1 sm:grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-3">
           {tenders.map((item, index) => {
             return (
-              <Tender
+              <StausTender
                 key={index}
                 title={item.title}
                 author={item.author}
@@ -53,6 +52,7 @@ const Public_tenders = () => {
                 tenderID={item.id}
                 startDate={item.startDate}
                 endDate={item.endDate}
+                status={item.active}
               />
             );
           })}

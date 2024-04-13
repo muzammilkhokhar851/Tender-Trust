@@ -34,6 +34,7 @@ const Public_tenders = () => {
     GetTenders();
   }, []);
 
+  console.log(tenders);
   return (
     <>
       <div className="">
@@ -47,6 +48,9 @@ const Public_tenders = () => {
                 <Tender
                   key={index}
                   title={item.name}
+                  startDate={item.startDate}
+                  endDate={item.endDate}
+                  tenderID={item.id}
                   author={item.contract_title}
                   description={item.description}
                 />

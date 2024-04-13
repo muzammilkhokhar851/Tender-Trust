@@ -6,12 +6,23 @@ import { SiShopware } from "react-icons/si";
 import { RiNotification3Line } from "react-icons/ri";
 import { MdKeyboardArrowDown } from "react-icons/md";
 import { Link, NavLink } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 import avatar from "../data/avatar.jpg";
 import { Cart, Chat, Notification, UserProfile } from ".";
 import { useStateContext } from "../contexts/ContextProvider";
 import { useSelector, useDispatch } from "react-redux";
 import { setUserProfile } from "../Toolkit/Slices/booleanSlice";
+import Button from "@mui/material/Button";
+import Menu from "@mui/material/Menu";
+import MenuItem from "@mui/material/MenuItem";
+import { IoLogInOutline } from "react-icons/io5";
+import { BiLogOut } from "react-icons/bi";
+import { TiUserAdd } from "react-icons/ti";
+import Wallet from "./Wallet";
+import { setUser } from "../Toolkit/Slices/authUserSlice";
+import { setpublic } from "../Toolkit/Slices/booleanSlice";
+import { setMetaMaskCred } from "../Toolkit/Slices/Web3Slice";
 
 const NavButton = ({ title, customFunc, icon, color, dotColor }) => (
   <button
@@ -30,6 +41,21 @@ const NavButton = ({ title, customFunc, icon, color, dotColor }) => (
 
 const Navbar = () => {
   const dispatch = useDispatch();
+  const navigate = useNavigate();
+
+  // Logout function
+  const HandleLogout = () => {
+    dispatch(setUser(null));
+    dispatch(setpublic(true));
+    dispatch(
+      setMetaMaskCred({
+        web3: null,
+        contract: null,
+        account: null,
+      })
+    );
+    navigate("/");
+  };
 
   // State Variables
   const isPublic = useSelector((state) => state.bool.isPublic);
@@ -55,6 +81,15 @@ const Navbar = () => {
 
     return () => window.removeEventListener("resize", handleResize);
   }, []);
+
+  const [anchorEl, setAnchorEl] = React.useState(null);
+  const open = Boolean(anchorEl);
+  const handleClickk = (event) => {
+    setAnchorEl(event.currentTarget);
+  };
+  const handleClose = () => {
+    setAnchorEl(null);
+  };
 
   useEffect(() => {
     if (screenSize <= 900) {
@@ -159,12 +194,18 @@ const Navbar = () => {
             alt="user-profile"
           />
           {authUser && (
-            <p>
+            <Button
+              id="basic-button"
+              aria-controls={open ? "basic-menu" : undefined}
+              aria-haspopup="true"
+              aria-expanded={open ? "true" : undefined}
+              onClick={handleClickk}
+            >
               <span className="text-gray-400 text-14">Hi,</span>{" "}
               <span className="text-gray-400 font-bold ml-1 text-14">
                 {authUser.user.name}
               </span>
-            </p>
+            </Button>
           )}
           <MdKeyboardArrowDown className="text-gray-400 text-14" />
         </div>
@@ -173,7 +214,63 @@ const Navbar = () => {
         {isClicked.chat && <Chat />}
         {isClicked.notification && <Notification />} */}
         {/* {isClicked.userProfile && <UserProfile />} */}
-        {user && <UserProfile />}
+        <Menu
+          id="basic-menu"
+          anchorEl={anchorEl}
+          open={open}
+          onClose={handleClose}
+          MenuListProps={{
+            "aria-labelledby": "basic-button",
+          }}
+        >
+          <MenuItem onClick={handleClose}>
+            <div style={{ display: "flex", flexDirection: "column" }}>
+              {authUser ? (
+                <>
+                  <div>
+                    <Button
+                      variant="contained"
+                      style={{ backgroundColor: currentColor }}
+                      endIcon={<BiLogOut />}
+                      onClick={HandleLogout}
+                      className="w-full my-1"
+                    >
+                      <Link to="/signup">Logout</Link>
+                    </Button>
+                  </div>
+                  <div className="my-2">
+                    <Wallet />
+                  </div>
+                </>
+              ) : (
+                <>
+                  <div>
+                    <Button
+                      variant="contained"
+                      style={{ backgroundColor: currentColor }}
+                      endIcon={<TiUserAdd />}
+                      className="w-full my-1"
+                    >
+                      <Link to="/signup">Sign-Up</Link>
+                    </Button>
+                  </div>
+                  <div>
+                    <Button
+                      style={{ backgroundColor: currentColor }}
+                      variant="contained"
+                      endIcon={<IoLogInOutline />}
+                      className="w-full my-1"
+                    >
+                      <Link to="/login">Login</Link>
+                    </Button>
+                  </div>
+                </>
+              )}
+            </div>
+          </MenuItem>
+        </Menu>
+
+        {/* {user && <UserProfile />} */}
       </div>
     </div>
   );

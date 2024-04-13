@@ -14,6 +14,7 @@ import Bid from "./components/Bid";
 import Login from "./components/Login";
 import AllTendersDisplay from "./components/AllTendersDisplay";
 import Public_tenders from "./pages/Public_tenders";
+import ActiveTenders from "./components/ActiveTenders";
 import Signup from "./components/Signup";
 import Home from "./pages/Home";
 // import 'rsuite/dist/rsuite.min.css';
@@ -23,6 +24,7 @@ import AssignTender from "./components/AssignTender";
 import BidTender from "./components/BidTender";
 import DatePicker from "./components/DatePicker";
 import AllTenders from "./components/Alltenders";
+import TenderStatus from "./pages/TenderStatus";
 import "./App.css";
 
 import { useStateContext } from "./contexts/ContextProvider";
@@ -114,7 +116,7 @@ const App = () => {
               <Route path="/govofficial/alltenders" element={<Tender title={title} author={author} description={description} />} /> */}
               <Route path="/contractor/alltenders" element={<AllTenders />} />
               <Route path="/govofficial/alltenders" element={<AllTenders />} />
-              <Route path="/activetenders" element={<AllTenders />} />
+              <Route path="/activetenders" element={<ActiveTenders />} />
               <Route path="/govofficial/tender/create" element={<CreateTender />} />
               <Route path="/govofficial/tender/assign" element={<Assign_task />} />
               <Route path="/bid" element={<Bid />} />
@@ -128,6 +130,7 @@ const App = () => {
               <Route path="/assigntender" element={<AssignTender />} />
               <Route path="/bidtender" element={<BidTender />} />
               <Route path="/date" element={<DatePicker />} />
+              <Route path="/status" element={<TenderStatus />} />
 
               {/* {ALL PUBLIC ROUTES ARE BELLOW} */}
               <Route path="/tenders" element={<Public_tenders />} />

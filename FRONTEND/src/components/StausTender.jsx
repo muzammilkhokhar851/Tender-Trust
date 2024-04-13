@@ -17,6 +17,7 @@ const Tender = ({
   startDate,
   endDate,
   tenderID,
+  status,
 }) => {
   const { currentColor, currentMode } = useStateContext();
   const [open, setOpen] = useState(false);
@@ -34,6 +35,9 @@ const Tender = ({
     boxShadow: 24,
     p: 4,
   };
+
+  console.log("Tender ID", tenderID);
+  console.log("Title", status);
   return (
     <>
       <Modal
@@ -71,7 +75,9 @@ const Tender = ({
       </Modal>
       <div className="w-auto mx-3 bg-white dark:text-gray-200 dark:bg-secondary-dark-bg rounded-2xl p-6 m-3">
         <div className="flex justify-between">
-          <p className="text-xl font-semibold">Tender</p>
+          <p className="text-xl font-semibold">
+            Tender # {tenderID} - {status === true ? "( Active )" : "( Non status )"}
+          </p>
           <button type="button" className="text-xl font-semibold text-gray-500">
             <IoIosMore />
           </button>

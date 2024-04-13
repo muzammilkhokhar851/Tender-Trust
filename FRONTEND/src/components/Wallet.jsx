@@ -39,9 +39,12 @@ const Wallet = () => {
             account: accounts[0],
           })
         );
-        navigateTo("/govofficial/tender/create");
+        // navigateTo("/govofficial/tender/create");
+        alert("Wallet Connected Successfully");
       } else {
+        openMetaMaskInstallPage();
         throw new Error();
+
       }
     } catch (error) {
       console.error(error);

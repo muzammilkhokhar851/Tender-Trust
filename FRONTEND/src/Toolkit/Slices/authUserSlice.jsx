@@ -72,9 +72,9 @@ export const authUserSlice = createSlice({
     setStatus: (state, action) => {
       state.status = action.payload;
     },
-  },
-  setLoginLoading: (state, action) => {
-    state.loginLoading = action.payload;
+    setLoginLoading: (state, action) => {
+      state.loginLoading = action.payload;
+    },
   },
   setRegisterLoading: (state, action) => {
     state.registerLoading = action.payload;

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 import styles from "./CreateTender.module.css";
 import dayjs from "dayjs";
@@ -63,8 +63,9 @@ const CreateTender = () => {
 
   const createTask = async (event) => {
     event.preventDefault();
-    if (!contract) {
+    if (!contract || !contract.methods || !account) {
       alert("Please Connect Your MetaMask First");
+      return;
     } else {
       try {
         const url = "http://localhost:5000/createTender";
@@ -82,7 +83,6 @@ const CreateTender = () => {
 
         if (response.status === 200) {
           const responseData = response.data;
-          console.log(responseData);
           if (contract && contract.methods) {
             console.log("Bhupendra Jogi");
             const metaMaskResults = await contract.methods
@@ -102,9 +102,12 @@ const CreateTender = () => {
             // } else {
             //   alert("Tender Not Created Successfully");
             // }
+          alert("Tender Created Successfully");
+
           }
         } else {
           alert("Task cannot be added");
+          return
         }
       } catch (error) {
         // Handle errors here
@@ -147,16 +150,8 @@ const CreateTender = () => {
     }
   };
 
-  // const handleSubmit = async (e) => {
-  //   e.preventDefault();
+  
 
-  //   const response = await axios.post(
-  //     "http://localhost:5000/tendertrust/ethereum/createTender",
-  //     tender.description
-  //   );
-
-  //   console.log(response.data);
-  // };
 
   return (
     <div>
@@ -258,29 +253,6 @@ const CreateTender = () => {
               id="password_field"
             />
           </div>
-          <div className={`${styles.input_container}`}>
-            <label className={styles.input_label} htmlFor="email_field">
-              Tender #
-            </label>
-            <svg
-              fill="none"
-              viewBox="0 0 24 24"
-              height="24"
-              width="24"
-              xmlns="http://www.w3.org/2000/svg"
-              className={styles.icon}
-            >
-              {/* SVG path here */}
-            </svg>
-            <input
-              title="Input title"
-              name="tenderNumber"
-              onChange={handleChange}
-              type="number"
-              className={styles.input_field}
-              id="email_field"
-            />
-          </div>
           <div className={styles.input_container}>
             <label className={styles.input_label} htmlFor="password_field">
               End Date
@@ -296,7 +268,7 @@ const CreateTender = () => {
               {/* SVG path here */}
             </svg>
             <LocalizationProvider dateAdapter={AdapterDayjs}>
-              <DatePicker value={endDate} onChange={handleEndDateChange} />
+              <DatePicker value={endDate} placeholder="End Date" onChange={handleEndDateChange} />
             </LocalizationProvider>
           </div>
         </div>
